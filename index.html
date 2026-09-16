@@ -331,7 +331,7 @@
 (function(){
   'use strict';
 
-  var ADMIN_EMAIL = 'abdelrahman444@gmail.com';
+  var ADMIN_EMAIL = 'abdelrehman444@gmail.com';
   var ADMIN_PASSWORD = 'abdelrahman';
 
   var STORAGE_PRODUCTS = 'nokhba_products';
@@ -578,7 +578,7 @@
     document.getElementById('checkout-btn').disabled = state.cart.length === 0;
   }
 
-  // CHECKOUT -> MAILTO abdelrahman444@gmail.com
+  // CHECKOUT -> MAILTO abdelrehman444@gmail.com
   document.getElementById('checkout-btn').addEventListener('click', function(){
     if(state.cart.length === 0) return;
 
@@ -591,7 +591,7 @@
     });
     emailBody += "\n" + "الإجمالي: " + document.getElementById('cart-total').textContent;
 
-    window.location.href = "mailto:abdelrahman444@gmail.com?subject=" + encodeURIComponent("طلب جديد من المتجر") + "&body=" + encodeURIComponent(emailBody);
+    window.location.href = "mailto:abdelrehman444@gmail.com?subject=" + encodeURIComponent("طلب جديد من المتجر") + "&body=" + encodeURIComponent(emailBody);
 
     state.cart = [];
     saveJSON(STORAGE_CART, state.cart);
