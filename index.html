@@ -7,37 +7,37 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen flex flex-col">
 
   <!-- Header / الشريط العلوي -->
-  <header class="bg-white shadow-md sticky top-0 z-40">
+  <header class="bg-gray-900 text-white shadow-md sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3 space-x-reverse">
-        <div class="bg-blue-600 text-white p-2 rounded-lg font-bold text-xl">النخبة</div>
-        <h1 class="text-xl font-bold text-gray-800">متجر النخبة</h1>
+        <div class="bg-gray-800 text-white p-2 rounded-lg font-bold text-xl border border-gray-700">النخبة</div>
+        <h1 class="text-xl font-bold text-gray-100">متجر النخبة</h1>
       </div>
       
       <div class="flex items-center space-x-4 space-x-reverse">
         <!-- زر دخول الأدمن -->
-        <button id="adminLoginBtn" onclick="toggleModal('adminModal')" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg transition flex items-center gap-2">
-          <i class="fa-solid fa-user-shield text-blue-600"></i>
+        <button id="adminLoginBtn" onclick="toggleModal('adminModal')" class="text-sm bg-gray-800 hover:bg-gray-700 text-gray-200 px-3 py-2 rounded-lg transition border border-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-gray-400"></i>
           <span>دخول الأدمن</span>
         </button>
 
         <!-- زر السلة -->
-        <button onclick="toggleCart()" class="relative bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition flex items-center gap-2 px-4">
+        <button onclick="toggleCart()" class="relative bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-lg transition border border-gray-700 flex items-center gap-2 px-4">
           <i class="fa-solid fa-cart-shopping"></i>
           <span class="font-bold">السلة</span>
-          <span id="cartCount" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+          <span id="cartCount" class="bg-red-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">0</span>
         </button>
       </div>
     </div>
   </header>
 
   <!-- غلاف المتجر -->
-  <section class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-12 px-4 text-center">
+  <section class="bg-gray-800 text-white py-12 px-4 text-center border-b border-gray-700">
     <h2 class="text-3xl font-extrabold mb-2">أهلاً بك في متجر النخبة</h2>
-    <p class="text-blue-100 max-w-xl mx-auto">تصفح أفضل المنتجات واطلب مباشرة بدون أي تعقيد عبر الواتساب أو البريد الإلكتروني.</p>
+    <p class="text-gray-300 max-w-xl mx-auto">تصفح أفضل المنتجات واطلب مباشرة بدون أي تعقيد عبر الواتساب أو البريد الإلكتروني.</p>
   </section>
 
   <!-- محتوى المتجر الرئيسي -->
@@ -46,7 +46,7 @@
       <h3 class="text-2xl font-bold text-gray-800">المنتجات المتاحة</h3>
       <!-- أزرار أدمن فقط (تظهر بعد الدخول) -->
       <div id="adminControls" class="hidden">
-        <button onclick="toggleModal('addProductModal')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+        <button onclick="toggleModal('addProductModal')" class="bg-gray-900 hover:bg-gray-800 text-white border border-gray-700 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
           <i class="fa-solid fa-plus"></i> إضافة منتج جديد
         </button>
       </div>
@@ -59,22 +59,22 @@
   </main>
 
   <!-- قائمة السلة الجانبية (Cart Drawer) -->
-  <div id="cartDrawer" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity">
+  <div id="cartDrawer" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden transition-opacity">
     <div class="fixed inset-y-0 left-0 max-w-full flex">
       <div class="w-screen max-w-md bg-white shadow-xl flex flex-col justify-between">
         
         <!-- عنوان السلة -->
-        <div class="p-4 border-b flex justify-between items-center bg-gray-50">
-          <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
-            <i class="fa-solid fa-cart-shopping text-blue-600"></i> سلة المشتريات
+        <div class="p-4 border-b bg-gray-900 text-white flex justify-between items-center">
+          <h3 class="text-lg font-bold flex items-center gap-2">
+            <i class="fa-solid fa-cart-shopping text-gray-300"></i> سلة المشتريات
           </h3>
-          <button onclick="toggleCart()" class="text-gray-500 hover:text-gray-700 p-2">
+          <button onclick="toggleCart()" class="text-gray-400 hover:text-white p-2">
             <i class="fa-solid fa-xmark text-xl"></i>
           </button>
         </div>
 
         <!-- قائمة المنتجات المضافة -->
-        <div id="cartItems" class="p-4 overflow-y-auto flex-grow divide-y divide-gray-100">
+        <div id="cartItems" class="p-4 overflow-y-auto flex-grow divide-y divide-gray-200">
           <!-- تضاف هنا تلقائياً -->
         </div>
 
@@ -82,14 +82,14 @@
         <div class="p-4 border-t bg-gray-50 space-y-3">
           <div class="flex justify-between items-center text-lg font-bold">
             <span>الإجمالي:</span>
-            <span id="cartTotal" class="text-blue-600">0 ج.م</span>
+            <span id="cartTotal" class="text-gray-900 font-extrabold">0 ج.م</span>
           </div>
 
           <div class="space-y-2 pt-2">
-            <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-md transition">
+            <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow transition">
               <i class="fa-brands fa-whatsapp text-xl"></i> الشراء المباشر عبر واتساب
             </button>
-            <button onclick="checkoutMailto()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-md transition">
+            <button onclick="checkoutMailto()" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow transition">
               <i class="fa-solid fa-envelope text-xl"></i> الشراء عبر البريد الإلكتروني
             </button>
           </div>
@@ -100,64 +100,64 @@
   </div>
 
   <!-- نافذة تسجيل دخول الأدمن -->
-  <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative">
+  <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative border border-gray-200">
       <button onclick="toggleModal('adminModal')" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600">
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
-      <h3 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">تسجيل دخول الأدمن</h3>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 border-b pb-2">تسجيل دخول الأدمن</h3>
       <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">البريد الإلكتروني</label>
-          <input type="email" id="adminEmail" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="abdelrehman444@gmail.com">
+          <input type="email" id="adminEmail" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-gray-800 outline-none" placeholder="">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">كلمة المرور</label>
-          <input type="password" id="adminPassword" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="******">
+          <input type="password" id="adminPassword" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-gray-800 outline-none" placeholder="">
         </div>
-        <p id="adminLoginError" class="text-red-500 text-sm hidden">بيانات الدخول غير صحيحة!</p>
-        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 transition">دخول</button>
+        <p id="adminLoginError" class="text-red-600 text-sm hidden font-bold">بيانات الدخول غير صحيحة!</p>
+        <button type="submit" class="w-full bg-gray-900 text-white font-bold py-2.5 rounded-lg hover:bg-gray-800 transition">دخول</button>
       </form>
     </div>
   </div>
 
   <!-- نافذة إضافة منتج جديد (للأدمن فقط) -->
-  <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative">
+  <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 relative border border-gray-200">
       <button onclick="toggleModal('addProductModal')" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600">
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
-      <h3 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">إضافة منتج جديد</h3>
+      <h3 class="text-xl font-bold mb-4 text-gray-900 border-b pb-2">إضافة منتج جديد</h3>
       <form onsubmit="handleAddProduct(event)" class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">اسم المنتج</label>
-          <input type="text" id="prodTitle" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="text" id="prodTitle" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-gray-800 outline-none">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">السعر (ج.م)</label>
-          <input type="number" id="prodPrice" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="number" id="prodPrice" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-gray-800 outline-none">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">رابط الصورة (URL)</label>
-          <input type="url" id="prodImage" required class="w-full border rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="https://via.placeholder.com/300">
+          <input type="url" id="prodImage" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-gray-800 outline-none" placeholder="https://">
         </div>
-        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2.5 rounded-lg hover:bg-green-700 transition">إضافة المنتج</button>
+        <button type="submit" class="w-full bg-gray-900 text-white font-bold py-2.5 rounded-lg hover:bg-gray-800 transition">إضافة المنتج</button>
       </form>
     </div>
   </div>
 
   <!-- أزرار التواصل العائمة (واتساب وتليجرام) -->
   <div class="fixed bottom-6 left-6 flex flex-col gap-3 z-40">
-    <a href="https://wa.me/201093082268" target="_blank" class="bg-green-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition text-2xl" title="تواصل عبر واتساب">
+    <a href="https://wa.me/201093082268" target="_blank" class="bg-green-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-green-700 transition text-2xl" title="تواصل عبر واتساب">
       <i class="fa-brands fa-whatsapp"></i>
     </a>
-    <a href="https://t.me/+201093082268" target="_blank" class="bg-blue-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-600 transition text-2xl" title="تواصل عبر تليجرام">
+    <a href="https://t.me/+201093082268" target="_blank" class="bg-gray-800 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:bg-gray-900 transition text-2xl border border-gray-700" title="تواصل عبر تليجرام">
       <i class="fa-brands fa-telegram"></i>
     </a>
   </div>
 
   <!-- تذييل الصفحة -->
-  <footer class="bg-gray-800 text-gray-300 py-6 text-center text-sm mt-auto">
+  <footer class="bg-gray-900 text-gray-400 py-6 text-center text-sm mt-auto border-t border-gray-800">
     <p>© 2026 جميع الحقوق محفوظة لـ <strong>متجر النخبة</strong></p>
   </footer>
 
@@ -177,19 +177,19 @@
     function renderProducts() {
       const grid = document.getElementById('productGrid');
       grid.innerHTML = products.map(p => `
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition flex flex-col">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition flex flex-col">
           <img src="${p.image}" alt="${p.title}" class="w-full h-48 object-cover">
           <div class="p-4 flex-grow flex flex-col justify-between">
             <div>
-              <h4 class="font-bold text-gray-800 text-lg mb-1">${p.title}</h4>
-              <p class="text-blue-600 font-bold text-md mb-4">${p.price} ج.م</p>
+              <h4 class="font-bold text-gray-900 text-lg mb-1">${p.title}</h4>
+              <p class="text-gray-800 font-extrabold text-md mb-4">${p.price} ج.م</p>
             </div>
             <div class="space-y-2">
-              <button onclick="addToCart(${p.id})" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition flex items-center justify-center gap-2">
+              <button onclick="addToCart(${p.id})" class="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-2 rounded-lg transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-cart-plus"></i> إضافة للسلة
               </button>
               ${isAdmin ? `
-                <button onclick="deleteProduct(${p.id})" class="w-full bg-red-100 hover:bg-red-200 text-red-600 font-bold py-1.5 rounded-lg text-xs transition">
+                <button onclick="deleteProduct(${p.id})" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-bold py-1.5 rounded-lg text-xs transition">
                   <i class="fa-solid fa-trash"></i> حذف المنتج (أدمن)
                 </button>
               ` : ''}
@@ -209,7 +209,6 @@
         cart.push({ ...prod, qty: 1 });
       }
       updateCartUI();
-      // فتح السلة تلقائياً عند إضافة منتج
       document.getElementById('cartDrawer').classList.remove('hidden');
     }
 
