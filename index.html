@@ -17,9 +17,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .gold-border {
-      border-color: #b38728;
-    }
   </style>
 </head>
 <body class="bg-[#121212] text-gray-100 min-h-screen flex flex-col selection:bg-[#b38728] selection:text-black">
@@ -88,15 +85,15 @@
         <p class="text-xs text-gray-500 mt-1">تصفح المجموعة واطلب مباشرة بدون أي معوقات</p>
       </div>
       
-      <!-- أزرار الأدمن المضافة بذكاء دون تخريب التصميم -->
-      <div id="adminControls" class="hidden">
-        <button onclick="toggleModal('addProductModal')" class="bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg">
+      <!-- أزرار الأدمن المضافة -->
+      <div id="adminControls" class="hidden flex items-center gap-2">
+        <button onclick="openAddModal()" class="bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg">
           <i class="fa-solid fa-plus"></i> إضافة منتج جديد
         </button>
       </div>
     </div>
 
-    <!-- شبكة المنتجات بتصميم الكروت الفاخرة -->
+    <!-- شبكة المنتجات -->
     <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       <!-- يتم توليد المنتجات عبر JavaScript -->
     </div>
@@ -120,10 +117,10 @@
 
         <!-- Cart Items -->
         <div id="cartItems" class="p-5 overflow-y-auto flex-grow space-y-4 divide-y divide-[#262626]">
-          <!-- المنتجات المضافة تظهر هنا -->
+          <!-- المنتجات المضافة -->
         </div>
 
-        <!-- Cart Footer / الشراء المباشر -->
+        <!-- Cart Footer -->
         <div class="p-5 border-t border-[#2e2615] bg-[#121212] space-y-4">
           <div class="flex justify-between items-center text-lg font-bold">
             <span class="text-gray-400">الإجمالي النهائي:</span>
@@ -144,7 +141,7 @@
     </div>
   </div>
 
-  <!-- Admin Login Modal / نافذة الأدمن النظيفة الخالية من أي placeholders -->
+  <!-- Admin Login Modal -->
   <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-[#181818] border border-[#3d331d] rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
       <button onclick="toggleModal('adminModal')" class="absolute top-4 left-4 text-gray-500 hover:text-gray-300">
@@ -168,14 +165,15 @@
     </div>
   </div>
 
-  <!-- Add Product Modal / إضافة منتج (أدمن) -->
+  <!-- Add / Edit Product Modal (مع زر رفع الصورة من الجهاز) -->
   <div id="addProductModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-[#181818] border border-[#3d331d] rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
       <button onclick="toggleModal('addProductModal')" class="absolute top-4 left-4 text-gray-500 hover:text-gray-300">
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
-      <h3 class="text-xl font-bold mb-6 text-white border-b border-[#2e2615] pb-3">إضافة منتج جديد</h3>
-      <form onsubmit="handleAddProduct(event)" class="space-y-4">
+      <h3 id="modalTitle" class="text-xl font-bold mb-6 text-white border-b border-[#2e2615] pb-3">إضافة منتج جديد</h3>
+      <form onsubmit="handleSaveProduct(event)" class="space-y-4">
+        <input type="hidden" id="editingId">
         <div>
           <label class="block text-xs font-bold text-gray-400 mb-1">اسم المنتج</label>
           <input type="text" id="prodTitle" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm">
@@ -185,15 +183,15 @@
           <input type="number" id="prodPrice" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm">
         </div>
         <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">رابط الصورة (URL)</label>
-          <input type="url" id="prodImage" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm" placeholder="https://">
+          <label class="block text-xs font-bold text-gray-400 mb-1">صورة المنتج (اختر من الجهاز)</label>
+          <input type="file" id="prodImageFile" accept="image/*" class="w-full bg-[#121212] border border-[#333] rounded-xl p-2.5 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#b38728] file:text-black hover:file:opacity-90 text-sm">
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">إضافة إلى المتجر</button>
+        <button type="submit" class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">حفظ المنتج</button>
       </form>
     </div>
   </div>
 
-  <!-- Floating Social Buttons / أزرار التواصل العائمة -->
+  <!-- Floating Social Buttons -->
   <div class="fixed bottom-6 left-6 flex flex-col gap-3 z-40">
     <a href="https://wa.me/201093082268" target="_blank" class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl transition text-2xl" title="واتساب">
       <i class="fa-brands fa-whatsapp"></i>
@@ -210,18 +208,19 @@
 
   <!-- JavaScript Engine -->
   <script>
-    // المنتجات الفخمة المعروضة في صورتك
-    let products = JSON.parse(localStorage.getItem('elnokhba_products')) || [
-      { id: 1, title: "مشروب فاخر عالي الجودة", price: 450, image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=500" },
-      { id: 2, title: "ساعة أوميجا أوتوماتيك كلاسيك", price: 12000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500" },
-      { id: 3, title: "عطر شانيل كوكو مودموزيل الأصلية", price: 3500, image: "https://images.unsplash.com/photo-1541643600914-78b084683601?w=500" }
-    ];
+    // يبدأ المتجر فارغاً تماماً كما طلبت
+    let products = JSON.parse(localStorage.getItem('elnokhba_products')) || [];
 
     let cart = [];
     let isAdmin = false;
 
     function renderProducts() {
       const grid = document.getElementById('productGrid');
+      if (products.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">لا توجد منتجات مضافة حالياً. قم بتسجيل دخول الأدمن لإضافة منتجات جديدة.</div>`;
+        return;
+      }
+
       grid.innerHTML = products.map(p => `
         <div class="bg-[#181818] rounded-2xl border border-[#2e2615] overflow-hidden hover:border-[#b38728] transition duration-300 shadow-xl flex flex-col group">
           <div class="relative overflow-hidden h-64 bg-black">
@@ -230,16 +229,21 @@
           <div class="p-5 flex-grow flex flex-col justify-between">
             <div>
               <h4 class="font-bold text-white text-lg mb-2 group-hover:text-[#d4af37] transition">${p.title}</h4>
-              <p class="gold-text font-black text-xl mb-4">${p.price.toLocaleString()} ج.م</p>
+              <p class="gold-text font-black text-xl mb-4">${Number(p.price).toLocaleString()} ج.م</p>
             </div>
             <div class="space-y-2">
               <button onclick="addToCart(${p.id})" class="w-full bg-[#242424] hover:bg-gradient-to-r hover:from-[#b38728] hover:to-[#fbf5b7] hover:text-black text-white font-bold py-3 rounded-xl border border-[#3d331d] hover:border-transparent transition flex items-center justify-center gap-2 text-sm">
                 <i class="fa-solid fa-cart-plus"></i> إضافة إلى السلة
               </button>
               ${isAdmin ? `
-                <button onclick="deleteProduct(${p.id})" class="w-full bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/50 font-bold py-2 rounded-xl text-xs transition">
-                  <i class="fa-solid fa-trash"></i> حذف المنتج
-                </button>
+                <div class="flex gap-2">
+                  <button onclick="openEditModal(${p.id})" class="w-1/2 bg-blue-950/40 hover:bg-blue-900/60 text-blue-400 border border-blue-900/50 font-bold py-2 rounded-xl text-xs transition">
+                    <i class="fa-solid fa-pen-to-square"></i> تعديل
+                  </button>
+                  <button onclick="deleteProduct(${p.id})" class="w-1/2 bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/50 font-bold py-2 rounded-xl text-xs transition">
+                    <i class="fa-solid fa-trash"></i> حذف
+                  </button>
+                </div>
               ` : ''}
             </div>
           </div>
@@ -307,6 +311,78 @@
       document.getElementById(modalId).classList.toggle('hidden');
     }
 
+    function openAddModal() {
+      document.getElementById('modalTitle').textContent = "إضافة منتج جديد";
+      document.getElementById('editingId').value = "";
+      document.getElementById('prodTitle').value = "";
+      document.getElementById('prodPrice').value = "";
+      document.getElementById('prodImageFile').value = "";
+      document.getElementById('prodImageFile').required = true;
+      toggleModal('addProductModal');
+    }
+
+    function openEditModal(id) {
+      const prod = products.find(p => p.id === id);
+      if (!prod) return;
+      document.getElementById('modalTitle').textContent = "تعديل المنتج";
+      document.getElementById('editingId').value = prod.id;
+      document.getElementById('prodTitle').value = prod.title;
+      document.getElementById('prodPrice').value = prod.price;
+      document.getElementById('prodImageFile').value = "";
+      document.getElementById('prodImageFile').required = false; // الصورة اختياري عند التعديل إذا لم يرغب بتغييرها
+      toggleModal('addProductModal');
+    }
+
+    function handleSaveProduct(e) {
+      e.preventDefault();
+      const editingId = document.getElementById('editingId').value;
+      const title = document.getElementById('prodTitle').value;
+      const price = parseFloat(document.getElementById('prodPrice').value);
+      const fileInput = document.getElementById('prodImageFile');
+
+      const saveToStorage = (imageUrl) => {
+        if (editingId) {
+          // تعديل منتج موجود
+          products = products.map(p => {
+            if (p.id == editingId) {
+              return {
+                ...p,
+                title,
+                price,
+                image: imageUrl || p.image
+              };
+            }
+            return p;
+          });
+        } else {
+          // إضافة منتج جديد
+          const newProd = { id: Date.now(), title, price, image: imageUrl };
+          products.push(newProd);
+        }
+        localStorage.setItem('elnokhba_products', JSON.stringify(products));
+        renderProducts();
+        toggleModal('addProductModal');
+      };
+
+      if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(uploadEvent) {
+          saveToStorage(uploadEvent.target.result);
+        };
+        reader.readAsDataURL(fileInput.files[0]);
+      } else {
+        saveToStorage(null);
+      }
+    }
+
+    function deleteProduct(id) {
+      if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+        products = products.filter(p => p.id !== id);
+        localStorage.setItem('elnokhba_products', JSON.stringify(products));
+        renderProducts();
+      }
+    }
+
     function checkoutWhatsApp() {
       if (cart.length === 0) { alert('السلة فارغة!'); return; }
       let text = "طلب جديد من متجر النخبة:\n\n";
@@ -344,28 +420,6 @@
         alert('تم تسجيل دخول الأدمن بنجاح!');
       } else {
         document.getElementById('adminLoginError').classList.remove('hidden');
-      }
-    }
-
-    function handleAddProduct(e) {
-      e.preventDefault();
-      const title = document.getElementById('prodTitle').value;
-      const price = parseFloat(document.getElementById('prodPrice').value);
-      const image = document.getElementById('prodImage').value;
-
-      const newProd = { id: Date.now(), title, price, image };
-      products.push(newProd);
-      localStorage.setItem('elnokhba_products', JSON.stringify(products));
-      renderProducts();
-      toggleModal('addProductModal');
-      e.target.reset();
-    }
-
-    function deleteProduct(id) {
-      if (confirm('هل أنت تأكد من حذف هذا المنتج؟')) {
-        products = products.filter(p => p.id !== id);
-        localStorage.setItem('elnokhba_products', JSON.stringify(products));
-        renderProducts();
       }
     }
 
