@@ -215,30 +215,97 @@
   </div>
 
   <!-- Add / Edit Product Modal -->
-  <div id="addProductModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-[#181818] border border-[#3d331d] rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
-      <button onclick="toggleModal('addProductModal')" class="spin-hover absolute top-4 left-4 text-gray-500 hover:text-gray-300">
-        <i class="fa-solid fa-xmark text-xl"></i>
+  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-[#181818] border border-[#3d331d] rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+
+    <button
+      type="button"
+      onclick="toggleModal('adminModal')"
+      class="spin-hover absolute top-4 left-4 text-gray-500 hover:text-gray-300"
+      aria-label="إغلاق">
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
+
+    <h3 class="text-xl font-bold mb-6 text-white border-b border-[#2e2615] pb-3 flex items-center gap-2">
+      <i class="fa-solid fa-lock text-[#d4af37]"></i>
+      تسجيل دخول الأدمن
+    </h3>
+
+    <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
+      <div>
+        <label for="adminEmail" class="block text-xs font-bold text-gray-400 mb-2">
+          البريد الإلكتروني
+        </label>
+        <input
+          type="email"
+          id="adminEmail"
+          value="abdelrehman444@gmail.com"
+          autocomplete="username"
+          required
+          class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none transition text-sm">
+      </div>
+
+      <div>
+        <label for="adminPassword" class="block text-xs font-bold text-gray-400 mb-2">
+          كلمة المرور
+        </label>
+        <input
+          type="password"
+          id="adminPassword"
+          autocomplete="current-password"
+          required
+          class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none transition text-sm">
+      </div>
+
+      <p id="adminLoginError" class="text-red-500 text-xs hidden font-bold" role="alert"></p>
+
+      <button
+        id="adminLoginButton"
+        type="submit"
+        class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">
+        دخول النظام
       </button>
-      <h3 id="modalTitle" class="text-xl font-bold mb-6 text-white border-b border-[#2e2615] pb-3">إضافة منتج جديد</h3>
-      <form onsubmit="handleSaveProduct(event)" class="space-y-4">
-        <input type="hidden" id="editingId">
-        <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">اسم المنتج</label>
-          <input type="text" id="prodTitle" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">السعر (ج.م)</label>
-          <input type="number" step="0.01" id="prodPrice" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-gray-400 mb-1">صورة المنتج (اختر من الجهاز)</label>
-          <input type="file" id="prodImageFile" accept="image/*" class="w-full bg-[#121212] border border-[#333] rounded-xl p-2.5 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#b38728] file:text-black hover:file:opacity-90 text-sm">
-        </div>
-        <button id="saveBtn" type="submit" class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">حفظ المنتج</button>
-      </form>
-    </div>
+    </form>
   </div>
+</div>
+
+<script>
+  async function handleAdminLogin(event) {
+    event.preventDefault();
+
+    const email = document.getElementById("adminEmail").value.trim();
+    const password = document.getElementById("adminPassword").value;
+    const errorElement = document.getElementById("adminLoginError");
+    const button = document.getElementById("adminLoginButton");
+
+    errorElement.textContent = "";
+    errorElement.classList.add("hidden");
+    button.disabled = true;
+    button.textContent = "جارٍ تسجيل الدخول...";
+
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      console.log("تم تسجيل الدخول بنجاح", data);
+      document.getElementById("adminLoginForm").reset();
+      toggleModal("adminModal");
+      showToast("تم تسجيل دخول الأدمن بنجاح ✅");
+    } catch (error) {
+      console.error("Admin login error:", error);
+      errorElement.textContent = "تعذّر تسجيل الدخول: " + error.message;
+      errorElement.classList.remove("hidden");
+    } finally {
+      button.disabled = false;
+      button.textContent = "دخول النظام";
+    }
+  }
+</script>
+
 
   <!-- Floating Social Buttons -->
   <div class="fixed bottom-6 left-6 flex flex-col gap-3 z-40">
