@@ -5,29 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>متجر النخبة | El Nokhba Store</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap');
     body { font-family: 'Cairo', sans-serif; }
-    .gold-gradient {
-      background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
-    }
     .gold-text {
       background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 50%, #b38728 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
+
+    /* ===== تأثيرات الأيقونات ===== */
+    .icon-hover:hover i { animation: iconBounce .6s ease; }
+    .crown-glow i { animation: crownGlow 2.5s ease-in-out infinite; }
+    .spin-hover:hover i { transform: rotate(360deg); transition: transform .6s ease; }
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-4px) scale(1.2); }
+      60% { transform: translateY(0) scale(.95); }
+    }
+    @keyframes crownGlow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(212,175,55,.3)); }
+      50% { filter: drop-shadow(0 0 8px rgba(212,175,55,.9)); }
+    }
+
+    /* ===== أزرار التواصل العائمة ===== */
+    .social-btn {
+      position: relative;
+      isolation: isolate;
+      transition: transform .3s ease;
+    }
+    .social-btn:hover { transform: translateY(-4px) scale(1.1) rotate(-6deg); }
+    .social-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      z-index: -1;
+      animation: pulseRing 2s infinite;
+    }
+    .wa-btn::before { background: #22c55e; }
+    .tg-btn::before { background: #0088cc; }
+    @keyframes pulseRing {
+      0% { transform: scale(1); opacity: .6; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+    .social-tip {
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      margin-right: 10px;
+      transform: translate(8px, -50%);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      background: #1a1a1a;
+      border: 1px solid #3d331d;
+      color: #fcf6ba;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      transition: all .25s ease;
+    }
+    .social-btn:hover .social-tip { opacity: 1; transform: translate(0, -50%); }
+
+    /* ===== ظهور المنتجات ===== */
+    .fade-in-up { animation: fadeInUp .6s ease both; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body class="bg-[#121212] text-gray-100 min-h-screen flex flex-col selection:bg-[#b38728] selection:text-black">
 
-  <!-- Header / الشريط العلوي الفخم -->
+  <!-- Header -->
   <header class="bg-[#1a1a1a]/90 backdrop-blur-md border-b border-[#33260c] sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-      
-      <!-- Logo & Crown -->
+
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#d4af37] to-[#8a6d1c] p-0.5 shadow-lg shadow-[#d4af37]/10">
+        <div class="crown-glow w-10 h-10 rounded-xl bg-gradient-to-br from-[#d4af37] to-[#8a6d1c] p-0.5 shadow-lg shadow-[#d4af37]/10">
           <div class="w-full h-full bg-[#121212] rounded-[10px] flex items-center justify-center">
             <i class="fa-solid fa-crown text-[#d4af37] text-lg"></i>
           </div>
@@ -35,23 +94,19 @@
         <span class="text-xl font-extrabold tracking-wide gold-text">متجر النخبة</span>
       </div>
 
-      <!-- Navigation Menu -->
       <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-gray-300">
         <a href="#store" class="text-[#d4af37] border-b-2 border-[#d4af37] pb-1">المتجر</a>
         <a href="#about" class="hover:text-[#d4af37] transition">من نحن</a>
         <a href="#support" class="hover:text-[#d4af37] transition">الدعم</a>
       </nav>
 
-      <!-- Admin & Cart Buttons -->
       <div class="flex items-center gap-3">
-        <!-- زر دخول الأدمن -->
-        <button id="adminLoginBtn" onclick="toggleModal('adminModal')" class="bg-[#242424] hover:bg-[#2e2e2e] text-gray-300 px-3.5 py-2 rounded-xl border border-[#3d331d] transition flex items-center gap-2 text-xs font-bold">
+        <button id="adminLoginBtn" onclick="toggleModal('adminModal')" class="icon-hover bg-[#242424] hover:bg-[#2e2e2e] text-gray-300 px-3.5 py-2 rounded-xl border border-[#3d331d] transition flex items-center gap-2 text-xs font-bold">
           <i class="fa-solid fa-user-shield text-[#d4af37]"></i>
           <span>دخول الأدمن</span>
         </button>
 
-        <!-- زر السلة -->
-        <button onclick="toggleCart()" class="relative bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-bold px-4 py-2 rounded-xl shadow-lg shadow-[#b38728]/20 hover:opacity-95 transition flex items-center gap-2 text-sm">
+        <button onclick="toggleCart()" class="icon-hover relative bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-bold px-4 py-2 rounded-xl shadow-lg shadow-[#b38728]/20 hover:opacity-95 transition flex items-center gap-2 text-sm">
           <i class="fa-solid fa-bag-shopping"></i>
           <span>السلة</span>
           <span id="cartCount" class="bg-black text-[#fcf6ba] text-xs w-5 h-5 rounded-full flex items-center justify-center font-extrabold">0</span>
@@ -61,7 +116,7 @@
     </div>
   </header>
 
-  <!-- Banner / البانر الرئيسي الفاخر -->
+  <!-- Banner -->
   <section class="max-w-7xl mx-auto px-4 mt-6 w-full">
     <div class="relative rounded-3xl overflow-hidden border border-[#3d331d] bg-gradient-to-r from-[#1c160c] via-[#121212] to-[#1c160c] p-8 md:p-14 text-center shadow-2xl">
       <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2b210d] border border-[#544119] text-[#d4af37] text-xs font-bold mb-4">
@@ -77,50 +132,44 @@
     </div>
   </section>
 
-  <!-- Main Content / المعرض الرئيسي للمنتجات -->
+  <!-- Products -->
   <main id="store" class="max-w-7xl mx-auto px-4 py-10 flex-grow w-full">
     <div class="flex justify-between items-center mb-8">
       <div>
         <h3 class="text-2xl font-extrabold text-white">المنتجات الحصرية</h3>
         <p class="text-xs text-gray-500 mt-1">تصفح المجموعة واطلب مباشرة بدون أي معوقات</p>
       </div>
-      
-      <!-- أزرار الأدمن المضافة -->
+
       <div id="adminControls" class="hidden flex items-center gap-2">
-        <button onclick="openAddModal()" class="bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg">
+        <button onclick="openAddModal()" class="icon-hover bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-2 shadow-lg">
           <i class="fa-solid fa-plus"></i> إضافة منتج جديد
+        </button>
+        <button onclick="handleLogout()" class="icon-hover bg-[#242424] hover:bg-red-950/50 text-red-400 border border-red-900/50 px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition">
+          <i class="fa-solid fa-right-from-bracket"></i> خروج
         </button>
       </div>
     </div>
 
-    <!-- شبكة المنتجات -->
-    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-      <!-- يتم توليد المنتجات عبر JavaScript -->
-    </div>
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
   </main>
 
-  <!-- Cart Drawer / السلة الجانبية الفخمة -->
+  <!-- Cart Drawer -->
   <div id="cartDrawer" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden transition-opacity">
     <div class="fixed inset-y-0 left-0 max-w-full flex">
       <div class="w-screen max-w-md bg-[#181818] border-r border-[#3d331d] shadow-2xl flex flex-col justify-between">
-        
-        <!-- Cart Header -->
+
         <div class="p-5 border-b border-[#2e2615] bg-[#121212] flex justify-between items-center">
           <h3 class="text-lg font-bold text-white flex items-center gap-2">
             <i class="fa-solid fa-bag-shopping text-[#d4af37]"></i>
             <span>حقيبة التسوق</span>
           </h3>
-          <button onclick="toggleCart()" class="text-gray-400 hover:text-white p-2">
+          <button onclick="toggleCart()" class="spin-hover text-gray-400 hover:text-white p-2">
             <i class="fa-solid fa-xmark text-xl"></i>
           </button>
         </div>
 
-        <!-- Cart Items -->
-        <div id="cartItems" class="p-5 overflow-y-auto flex-grow space-y-4 divide-y divide-[#262626]">
-          <!-- المنتجات المضافة -->
-        </div>
+        <div id="cartItems" class="p-5 overflow-y-auto flex-grow space-y-4 divide-y divide-[#262626]"></div>
 
-        <!-- Cart Footer -->
         <div class="p-5 border-t border-[#2e2615] bg-[#121212] space-y-4">
           <div class="flex justify-between items-center text-lg font-bold">
             <span class="text-gray-400">الإجمالي النهائي:</span>
@@ -128,10 +177,10 @@
           </div>
 
           <div class="space-y-2.5">
-            <button onclick="checkoutWhatsApp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+            <button onclick="checkoutWhatsApp()" class="icon-hover w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
               <i class="fa-brands fa-whatsapp text-xl"></i> الشراء المباشر عبر واتساب
             </button>
-            <button onclick="checkoutMailto()" class="w-full bg-[#262626] hover:bg-[#333333] text-gray-200 border border-[#42361c] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition">
+            <button onclick="checkoutMailto()" class="icon-hover w-full bg-[#262626] hover:bg-[#333333] text-gray-200 border border-[#42361c] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition">
               <i class="fa-solid fa-envelope text-xl text-[#d4af37]"></i> الشراء عبر البريد الإلكتروني
             </button>
           </div>
@@ -144,7 +193,7 @@
   <!-- Admin Login Modal -->
   <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-[#181818] border border-[#3d331d] rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
-      <button onclick="toggleModal('adminModal')" class="absolute top-4 left-4 text-gray-500 hover:text-gray-300">
+      <button onclick="toggleModal('adminModal')" class="spin-hover absolute top-4 left-4 text-gray-500 hover:text-gray-300">
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
       <h3 class="text-xl font-bold mb-6 text-white border-b border-[#2e2615] pb-3 flex items-center gap-2">
@@ -153,11 +202,11 @@
       <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-bold text-gray-400 mb-2">البريد الإلكتروني</label>
-          <input type="email" id="adminEmail" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none transition text-sm" placeholder="">
+          <input type="email" id="adminEmail" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none transition text-sm">
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-400 mb-2">كلمة المرور</label>
-          <input type="password" id="adminPassword" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none transition text-sm" placeholder="">
+          <input type="password" id="adminPassword" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none transition text-sm">
         </div>
         <p id="adminLoginError" class="text-red-500 text-xs hidden font-bold">بيانات الدخول غير صحيحة!</p>
         <button type="submit" class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">دخول النظام</button>
@@ -165,10 +214,10 @@
     </div>
   </div>
 
-  <!-- Add / Edit Product Modal (مع زر رفع الصورة من الجهاز) -->
+  <!-- Add / Edit Product Modal -->
   <div id="addProductModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-[#181818] border border-[#3d331d] rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
-      <button onclick="toggleModal('addProductModal')" class="absolute top-4 left-4 text-gray-500 hover:text-gray-300">
+      <button onclick="toggleModal('addProductModal')" class="spin-hover absolute top-4 left-4 text-gray-500 hover:text-gray-300">
         <i class="fa-solid fa-xmark text-xl"></i>
       </button>
       <h3 id="modalTitle" class="text-xl font-bold mb-6 text-white border-b border-[#2e2615] pb-3">إضافة منتج جديد</h3>
@@ -180,49 +229,92 @@
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-400 mb-1">السعر (ج.م)</label>
-          <input type="number" id="prodPrice" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm">
+          <input type="number" step="0.01" id="prodPrice" required class="w-full bg-[#121212] border border-[#333] rounded-xl p-3 text-white focus:border-[#d4af37] outline-none text-sm">
         </div>
         <div>
           <label class="block text-xs font-bold text-gray-400 mb-1">صورة المنتج (اختر من الجهاز)</label>
           <input type="file" id="prodImageFile" accept="image/*" class="w-full bg-[#121212] border border-[#333] rounded-xl p-2.5 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#b38728] file:text-black hover:file:opacity-90 text-sm">
         </div>
-        <button type="submit" class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">حفظ المنتج</button>
+        <button id="saveBtn" type="submit" class="w-full bg-gradient-to-r from-[#b38728] to-[#fbf5b7] text-black font-extrabold py-3 rounded-xl hover:opacity-95 transition shadow-lg mt-2">حفظ المنتج</button>
       </form>
     </div>
   </div>
 
   <!-- Floating Social Buttons -->
   <div class="fixed bottom-6 left-6 flex flex-col gap-3 z-40">
-    <a href="https://wa.me/201093082268" target="_blank" class="bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl transition text-2xl" title="واتساب">
+    <a href="https://wa.me/201093082268" target="_blank" class="social-btn wa-btn bg-green-500 hover:bg-green-600 text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl text-2xl">
       <i class="fa-brands fa-whatsapp"></i>
+      <span class="social-tip">تواصل عبر واتساب</span>
     </a>
-    <a href="https://t.me/+201093082268" target="_blank" class="bg-[#0088cc] hover:bg-[#0077b5] text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl transition text-2xl" title="تليجرام">
+    <a href="https://t.me/AbdelrehmanYasser" target="_blank" class="social-btn tg-btn bg-[#0088cc] hover:bg-[#0077b5] text-white w-12 h-12 rounded-2xl flex items-center justify-center shadow-2xl text-2xl">
       <i class="fa-brands fa-telegram"></i>
+      <span class="social-tip">تواصل عبر تليجرام</span>
     </a>
   </div>
 
-  <!-- Footer -->
+  <!-- Toast -->
+  <div id="toast" class="hidden fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#1a1a1a] border border-[#3d331d] text-gray-100 px-5 py-2.5 rounded-xl shadow-2xl text-sm font-bold z-[60]"></div>
+
   <footer class="bg-[#0a0a0a] border-t border-[#241e12] py-8 text-center text-xs text-gray-500 mt-auto">
     <p>© 2026 جميع الحقوق محفوظة لـ <strong class="gold-text">متجر النخبة</strong></p>
   </footer>
 
-  <!-- JavaScript Engine -->
   <script>
-    // يبدأ المتجر فارغاً تماماً كما طلبت
-    let products = JSON.parse(localStorage.getItem('elnokhba_products')) || [];
+    // ===== الإعدادات =====
+    const SUPABASE_URL = "https://wtzvtilnqdwjgsvvljz.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_zeKcV9ipPogMV4-gyhGUpw_hkBMzjTq";
+    const BUCKET = "product-images";
+    const WHATSAPP_NUMBER = "201093082268";
+    const ADMIN_EMAIL = "abdelrehman444@gmail.com";
 
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let products = [];
     let cart = [];
     let isAdmin = false;
 
+    const $ = (id) => document.getElementById(id);
+    const sameId = (a, b) => String(a) === String(b);
+
+    // ===== إشعارات =====
+    function showToast(msg) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+
+    function toggleModal(modalId) {
+      $(modalId).classList.toggle('hidden');
+    }
+
+    // ===== تحميل المنتجات من Supabase =====
+    async function loadProducts() {
+      const { data, error } = await sb.from('products').select('*');
+      if (error) {
+        console.error(error);
+        showToast('تعذر تحميل المنتجات');
+        return;
+      }
+      products = (data || []).map(p => ({
+        id: p.id,
+        title: p.title,
+        price: p.price,
+        image: p.image
+      }));
+      renderProducts();
+    }
+
     function renderProducts() {
-      const grid = document.getElementById('productGrid');
+      const grid = $('productGrid');
       if (products.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">لا توجد منتجات مضافة حالياً. قم بتسجيل دخول الأدمن لإضافة منتجات جديدة.</div>`;
+        grid.innerHTML = `<div class="col-span-full text-center py-20 text-gray-500">لا توجد منتجات مضافة حالياً.</div>`;
         return;
       }
 
-      grid.innerHTML = products.map(p => `
-        <div class="bg-[#181818] rounded-2xl border border-[#2e2615] overflow-hidden hover:border-[#b38728] transition duration-300 shadow-xl flex flex-col group">
+      grid.innerHTML = products.map((p, i) => `
+        <div class="fade-in-up bg-[#181818] rounded-2xl border border-[#2e2615] overflow-hidden hover:border-[#b38728] transition duration-300 shadow-xl flex flex-col group" style="animation-delay:${i * 0.08}s">
           <div class="relative overflow-hidden h-64 bg-black">
             <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
           </div>
@@ -232,15 +324,15 @@
               <p class="gold-text font-black text-xl mb-4">${Number(p.price).toLocaleString()} ج.م</p>
             </div>
             <div class="space-y-2">
-              <button onclick="addToCart(${p.id})" class="w-full bg-[#242424] hover:bg-gradient-to-r hover:from-[#b38728] hover:to-[#fbf5b7] hover:text-black text-white font-bold py-3 rounded-xl border border-[#3d331d] hover:border-transparent transition flex items-center justify-center gap-2 text-sm">
+              <button onclick="addToCart('${p.id}')" class="icon-hover w-full bg-[#242424] hover:bg-gradient-to-r hover:from-[#b38728] hover:to-[#fbf5b7] hover:text-black text-white font-bold py-3 rounded-xl border border-[#3d331d] hover:border-transparent transition flex items-center justify-center gap-2 text-sm">
                 <i class="fa-solid fa-cart-plus"></i> إضافة إلى السلة
               </button>
               ${isAdmin ? `
                 <div class="flex gap-2">
-                  <button onclick="openEditModal(${p.id})" class="w-1/2 bg-blue-950/40 hover:bg-blue-900/60 text-blue-400 border border-blue-900/50 font-bold py-2 rounded-xl text-xs transition">
+                  <button onclick="openEditModal('${p.id}')" class="icon-hover w-1/2 bg-blue-950/40 hover:bg-blue-900/60 text-blue-400 border border-blue-900/50 font-bold py-2 rounded-xl text-xs transition">
                     <i class="fa-solid fa-pen-to-square"></i> تعديل
                   </button>
-                  <button onclick="deleteProduct(${p.id})" class="w-1/2 bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/50 font-bold py-2 rounded-xl text-xs transition">
+                  <button onclick="deleteProduct('${p.id}')" class="icon-hover w-1/2 bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/50 font-bold py-2 rounded-xl text-xs transition">
                     <i class="fa-solid fa-trash"></i> حذف
                   </button>
                 </div>
@@ -251,179 +343,198 @@
       `).join('');
     }
 
+    // ===== الأدمن (Supabase Auth) =====
+    function setAdmin(state) {
+      isAdmin = state;
+      $('adminControls').classList.toggle('hidden', !state);
+      $('adminLoginBtn').classList.toggle('hidden', state);
+      renderProducts();
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const { error } = await sb.auth.signInWithPassword({
+        email: $('adminEmail').value.trim(),
+        password: $('adminPassword').value
+      });
+      if (error) {
+        $('adminLoginError').classList.remove('hidden');
+        return;
+      }
+      $('adminLoginError').classList.add('hidden');
+      e.target.reset();
+      toggleModal('adminModal');
+      showToast('تم تسجيل دخول الأدمن بنجاح ✅');
+    }
+
+    async function handleLogout() {
+      await sb.auth.signOut();
+      showToast('تم تسجيل الخروج');
+    }
+
+    sb.auth.onAuthStateChange((_event, session) => {
+      setAdmin(!!session);
+    });
+
+    // ===== إضافة / تعديل / حذف =====
+    function openAddModal() {
+      $('modalTitle').textContent = "إضافة منتج جديد";
+      $('editingId').value = "";
+      $('prodTitle').value = "";
+      $('prodPrice').value = "";
+      $('prodImageFile').value = "";
+      $('prodImageFile').required = true;
+      toggleModal('addProductModal');
+    }
+
+    function openEditModal(id) {
+      const prod = products.find(p => sameId(p.id, id));
+      if (!prod) return;
+      $('modalTitle').textContent = "تعديل المنتج";
+      $('editingId').value = prod.id;
+      $('prodTitle').value = prod.title;
+      $('prodPrice').value = prod.price;
+      $('prodImageFile').value = "";
+      $('prodImageFile').required = false;
+      toggleModal('addProductModal');
+    }
+
+    async function handleSaveProduct(e) {
+      e.preventDefault();
+      const btn = $('saveBtn');
+      btn.disabled = true;
+      btn.textContent = 'جاري الحفظ...';
+
+      const editingId = $('editingId').value;
+      const title = $('prodTitle').value.trim();
+      const price = parseFloat($('prodPrice').value);
+      const file = $('prodImageFile').files[0];
+
+      try {
+        let imageUrl = null;
+
+        if (file) {
+          const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+          const path = `${Date.now()}-${safeName}`;
+          const { error: upErr } = await sb.storage.from(BUCKET).upload(path, file);
+          if (upErr) throw upErr;
+          imageUrl = sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+        }
+
+        if (editingId) {
+          const payload = { title, price };
+          if (imageUrl) payload.image = imageUrl;
+          const { error } = await sb.from('products').update(payload).eq('id', editingId);
+          if (error) throw error;
+          showToast('تم تعديل المنتج ✅');
+        } else {
+          if (!imageUrl) throw new Error('الصورة مطلوبة');
+          const { error } = await sb.from('products').insert({ title, price, image: imageUrl });
+          if (error) throw error;
+          showToast('تمت إضافة المنتج ✅');
+        }
+
+        toggleModal('addProductModal');
+        await loadProducts();
+      } catch (err) {
+        console.error(err);
+        showToast('حصل خطأ أثناء الحفظ');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'حفظ المنتج';
+      }
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+      const { error } = await sb.from('products').delete().eq('id', id);
+      if (error) {
+        console.error(error);
+        showToast('تعذر الحذف');
+        return;
+      }
+      showToast('تم الحذف');
+      loadProducts();
+    }
+
+    // ===== السلة =====
     function addToCart(id) {
-      const prod = products.find(p => p.id === id);
-      const existing = cart.find(item => item.id === id);
+      const prod = products.find(p => sameId(p.id, id));
+      if (!prod) return;
+      const existing = cart.find(item => sameId(item.id, id));
       if (existing) {
         existing.qty++;
       } else {
         cart.push({ ...prod, qty: 1 });
       }
       updateCartUI();
-      document.getElementById('cartDrawer').classList.remove('hidden');
+      $('cartDrawer').classList.remove('hidden');
     }
 
     function changeQty(id, delta) {
-      const item = cart.find(i => i.id === id);
+      const item = cart.find(i => sameId(i.id, id));
       if (item) {
         item.qty += delta;
-        if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+        if (item.qty <= 0) cart = cart.filter(i => !sameId(i.id, id));
       }
       updateCartUI();
     }
 
     function updateCartUI() {
-      const cartCount = document.getElementById('cartCount');
-      const cartItems = document.getElementById('cartItems');
-      const cartTotal = document.getElementById('cartTotal');
-
       const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
       const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
-      cartCount.textContent = totalItems;
-      cartTotal.textContent = `${totalPrice.toLocaleString()} ج.م`;
+      $('cartCount').textContent = totalItems;
+      $('cartTotal').textContent = `${totalPrice.toLocaleString()} ج.م`;
 
       if (cart.length === 0) {
-        cartItems.innerHTML = `<div class="text-center text-gray-500 py-16 text-sm">حقيبة التسوق فارغة حالياً</div>`;
+        $('cartItems').innerHTML = `<div class="text-center text-gray-500 py-16 text-sm">حقيبة التسوق فارغة حالياً</div>`;
         return;
       }
 
-      cartItems.innerHTML = cart.map(item => `
+      $('cartItems').innerHTML = cart.map(item => `
         <div class="pt-3 flex justify-between items-center">
           <div>
             <h5 class="font-bold text-white text-sm mb-1">${item.title}</h5>
-            <p class="text-gray-400 text-xs">${item.price.toLocaleString()} ج.م × ${item.qty}</p>
+            <p class="text-gray-400 text-xs">${Number(item.price).toLocaleString()} ج.م × ${item.qty}</p>
           </div>
           <div class="flex items-center gap-2 bg-[#121212] border border-[#2e2615] rounded-xl p-1">
-            <button onclick="changeQty(${item.id}, -1)" class="w-6 h-6 bg-[#242424] rounded-lg text-gray-300 font-bold flex items-center justify-center hover:bg-[#333]">-</button>
+            <button onclick="changeQty('${item.id}', -1)" class="w-6 h-6 bg-[#242424] rounded-lg text-gray-300 font-bold flex items-center justify-center hover:bg-[#333]">-</button>
             <span class="text-xs font-bold text-white px-1">${item.qty}</span>
-            <button onclick="changeQty(${item.id}, 1)" class="w-6 h-6 bg-[#242424] rounded-lg text-gray-300 font-bold flex items-center justify-center hover:bg-[#333]">+</button>
+            <button onclick="changeQty('${item.id}', 1)" class="w-6 h-6 bg-[#242424] rounded-lg text-gray-300 font-bold flex items-center justify-center hover:bg-[#333]">+</button>
           </div>
         </div>
       `).join('');
     }
 
     function toggleCart() {
-      document.getElementById('cartDrawer').classList.toggle('hidden');
+      $('cartDrawer').classList.toggle('hidden');
     }
 
-    function toggleModal(modalId) {
-      document.getElementById(modalId).classList.toggle('hidden');
-    }
-
-    function openAddModal() {
-      document.getElementById('modalTitle').textContent = "إضافة منتج جديد";
-      document.getElementById('editingId').value = "";
-      document.getElementById('prodTitle').value = "";
-      document.getElementById('prodPrice').value = "";
-      document.getElementById('prodImageFile').value = "";
-      document.getElementById('prodImageFile').required = true;
-      toggleModal('addProductModal');
-    }
-
-    function openEditModal(id) {
-      const prod = products.find(p => p.id === id);
-      if (!prod) return;
-      document.getElementById('modalTitle').textContent = "تعديل المنتج";
-      document.getElementById('editingId').value = prod.id;
-      document.getElementById('prodTitle').value = prod.title;
-      document.getElementById('prodPrice').value = prod.price;
-      document.getElementById('prodImageFile').value = "";
-      document.getElementById('prodImageFile').required = false; // الصورة اختياري عند التعديل إذا لم يرغب بتغييرها
-      toggleModal('addProductModal');
-    }
-
-    function handleSaveProduct(e) {
-      e.preventDefault();
-      const editingId = document.getElementById('editingId').value;
-      const title = document.getElementById('prodTitle').value;
-      const price = parseFloat(document.getElementById('prodPrice').value);
-      const fileInput = document.getElementById('prodImageFile');
-
-      const saveToStorage = (imageUrl) => {
-        if (editingId) {
-          // تعديل منتج موجود
-          products = products.map(p => {
-            if (p.id == editingId) {
-              return {
-                ...p,
-                title,
-                price,
-                image: imageUrl || p.image
-              };
-            }
-            return p;
-          });
-        } else {
-          // إضافة منتج جديد
-          const newProd = { id: Date.now(), title, price, image: imageUrl };
-          products.push(newProd);
-        }
-        localStorage.setItem('elnokhba_products', JSON.stringify(products));
-        renderProducts();
-        toggleModal('addProductModal');
-      };
-
-      if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(uploadEvent) {
-          saveToStorage(uploadEvent.target.result);
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-      } else {
-        saveToStorage(null);
-      }
-    }
-
-    function deleteProduct(id) {
-      if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
-        products = products.filter(p => p.id !== id);
-        localStorage.setItem('elnokhba_products', JSON.stringify(products));
-        renderProducts();
-      }
+    function buildOrderText() {
+      let text = "طلب جديد من متجر النخبة:\n\n";
+      cart.forEach(item => {
+        text += `• ${item.title} (الكمية: ${item.qty}) - ${(item.price * item.qty).toLocaleString()} ج.م\n`;
+      });
+      const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
+      text += `\nالإجمالي النهائي: ${total.toLocaleString()} ج.م`;
+      return text;
     }
 
     function checkoutWhatsApp() {
-      if (cart.length === 0) { alert('السلة فارغة!'); return; }
-      let text = "طلب جديد من متجر النخبة:\n\n";
-      cart.forEach(item => { text += `• ${item.title} (الكمية: ${item.qty}) - ${(item.price * item.qty).toLocaleString()} ج.م\n`; });
-      const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-      text += `\nالإجمالي النهائي: ${total.toLocaleString()} ج.م`;
-      
-      const url = `https://wa.me/201093082268?text=${encodeURIComponent(text)}`;
+      if (cart.length === 0) { showToast('السلة فارغة!'); return; }
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(buildOrderText())}`;
       window.open(url, '_blank');
     }
 
     function checkoutMailto() {
-      if (cart.length === 0) { alert('السلة فارغة!'); return; }
-      let body = "طلب جديد من متجر النخبة:\n\n";
-      cart.forEach(item => { body += `• ${item.title} (الكمية: ${item.qty}) - ${(item.price * item.qty).toLocaleString()} ج.م\n`; });
-      const total = cart.reduce((sum, i) => sum + (i.price * i.qty), 0);
-      body += `\nالإجمالي النهائي: ${total.toLocaleString()} ج.م`;
-
-      const mailtoUrl = `mailto:abdelrehman444@gmail.com?subject=${encodeURIComponent("طلب جديد من متجر النخبة")}&body=${encodeURIComponent(body)}`;
+      if (cart.length === 0) { showToast('السلة فارغة!'); return; }
+      const mailtoUrl = `mailto:${ADMIN_EMAIL}?subject=${encodeURIComponent("طلب جديد من متجر النخبة")}&body=${encodeURIComponent(buildOrderText())}`;
       window.location.href = mailtoUrl;
     }
 
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('adminEmail').value;
-      const pass = document.getElementById('adminPassword').value;
-
-      if (email === 'abdelrehman444@gmail.com' && pass === 'abdelrehman') {
-        isAdmin = true;
-        document.getElementById('adminControls').classList.remove('hidden');
-        document.getElementById('adminLoginBtn').classList.add('hidden');
-        document.getElementById('adminLoginError').classList.add('hidden');
-        toggleModal('adminModal');
-        renderProducts();
-        alert('تم تسجيل دخول الأدمن بنجاح!');
-      } else {
-        document.getElementById('adminLoginError').classList.remove('hidden');
-      }
-    }
-
-    renderProducts();
+    // ===== بدء التشغيل =====
+    loadProducts();
     updateCartUI();
   </script>
 </body>
